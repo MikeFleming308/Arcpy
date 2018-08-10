@@ -25,10 +25,11 @@ RegisterExcel = os.path.join(dir_path, "Simplified_Register.xls")
 book = xlwt.Workbook()
 sheet = book.add_sheet("Register")
 row_list = []
-rowNo = 0
 col_count = 0
 headcount = -1
 headings = []
+rowNo = 0
+
 
 # Environment Settings
 arcpy.env.overwriteOutput = True
@@ -77,7 +78,6 @@ def CreateFieldName(txtlist):
 xl_workbook = xlrd.open_workbook(excel_path) # Open the workbook
 sheetIndex = int(sheetNo)-1
 xl_sheet = xl_workbook.sheet_by_index(sheetIndex)
-# num_cols = xl_sheet.ncols   # Number of columns
 headerIndexNo = int(headerRowNo)-1 # Convert user-input Excel row number to Python index number
 
 if headerIndexNo == 0: # If field names in first row of excel sheet, process only that row.
@@ -91,78 +91,36 @@ if headerIndexNo == 0: # If field names in first row of excel sheet, process onl
 else: # If field names are not all in the first row, we need to search the primary row and each row above it to row 1 until we find text.
 	head_row_list = [] # Create a list to hold the header rows.
 	for hr in range(0,  int(headerRowNo)): # Iterate through rows in Excel from 1 down to and including main header row.
-		msg = "hr: {}".format(hr)
-		arcpy.AddMessage(msg)
+		
 		head_row_list.append(xl_sheet.row(hr)) # Append each row to the list
-		head_row_list.reverse() # Reverse list so that main header row is the first item in the list of rows
-		for cell_obj in head_row_list[0]: # Iterate through values in main header row list
-			val = cell_obj.value
-			headcount += 1 # Increment heading count
-			if not val in ("", None): # If cell value is not empty or null...
-				headings.append(val) # Write value to header list
+		
+	head_row_list.reverse() # Reverse list so that main header row is the first item in the list of rows
+	for cell_obj in head_row_list[0]: # Iterate through values in main header row list
+		val = cell_obj.value
+		headcount += 1 # Increment heading count
+		if not val in ("", None): # If cell value is not empty or null...
+			headings.append(val) # Write value to header list
+		else:
+			val_list = [] # Create a list to hold values from the same column in rows above the primary row .
+			for nextrowup in head_row_list[1:]: #  Iterate through the other rows...
+				val = nextrowup[headcount].value # Grab the value from the respective column.
+				if not val in  ("", None): # If cell value is not empty or null...
+					val_list.append(val) # Write value to value list
+			if len(val_list) == 0: # If no values are written to the list, they must have been all "" or None
+				headings.append("") # Write an empty string to the header list
 			else:
-				val_list = [] # Create a list to hold values from the same column in rows above the primary row .
-				msg = "Head Row List: {}".format(head_row_list)
-				# arcpy.AddMessage(msg)
-				for nextrowup in head_row_list[1:]: #  Iterate through the other rows...
-					arcpy.AddMessage(nextrowup)
-					
-				
-				
-					val = nextrowup[headcount] # Grab the value from the respective column.
-					if not val in  ("", None): # If cell value is not empty or null...
-						val_list.append(val) # Write value to value list
-				if len(val_list) == 0: # If no values are written to the list, they must have been all "" or None
-					headings.append("") # Write an empty string to the header list
-				else:
-					headings.append(val_list[0]) # Grab the first value in the value list and add it to the header list
-				
+				headings.append(val_list[0]) # Grab the first value in the value list and add it to the header list
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# row2 = xl_sheet.row(2) # Grab the row above the row holding the field aliases
-# rowH1 = xl_sheet.row(headerIndexNo) # Grab the row holding the field aliases
-# head_a = [val.value for val in rowH1] # Create list of field aliases.
-# head_b = [val.value for val in row2] # Create list of field aliases from row above in case of merged cells.
-
-# for head in head_a: # Iterate though first list of headings
-	# headcount += 1 # Increment heading count
-	# if head == "": 
-		# head = head_b[headcount] # If no value in first list of headings, get a value from the secondlist
-	# headings.append(head) 
-
-# head_a = [val.value for val in row3] # Create list of field aliases.
-# head_b = [val.value for val in row2] # Create list of field aliases from row above in case of merged cells.
-
-
-
-
-fname_alias_dict = CreateFieldName(headings) 
-field_order = fname_alias_dict["F_ORDER"]
+fname_alias_dict = CreateFieldName(headings) # Feed the finalised list of field names into the 'CreateFieldName' function to output a dictionary
+field_order = fname_alias_dict["F_ORDER"] # Get the field name order list from the dictionary
 
 for f in field_order: # Create field names in output table
-	sheet.write(rowNo, col_count, f)
+	sheet.write(0, col_count, f)
 	col_count += 1
 
 for rowNum in range(int(headerRowNo), int(stop)):
 	thisrow = []
-	for col in range(0, len(field_order)+1): #		 ???
+	for col in range(0, len(field_order)): #
 		cell_obj = xl_sheet.cell(rowNum, col)
 		thisrow.append(cell_obj.value)
 	row_list.append(thisrow)
