@@ -5,7 +5,7 @@
 # Mike Fleming 
 # michael.fleming@aurecongroup.com
 # Created: 10/07/2018
-# Last updated 10/07/2018
+# Last updated 11/07/2018
 # Description: 
 #
 #---------------------------------------------------------------------------
@@ -50,7 +50,7 @@ def CreateFieldName(txtlist):
 	"""Takes a list of strings and formats them as valid field names, returns a dictionary of keys=FIELD_NAME and values=string. Ordered list of field names included as key == "F_ORDER"."""
 	fieldnames = [] # Create a list to maintain ordering of field names
 	fdict = dict() # Create a dictionary to return
-	swaplist = ("_", "/", "\n") # List of characters, new line to be replaced with a space
+	swaplist = ("-", "_", "/", "\n") # List of characters, new line to be replaced with a space
 	nums = [str(num) for num in range(10)] # Create a list of numbers 0-9 as text 
 	removelist = ["(", ")", ".", "#", "*", "'"] 
 	fnum = 1
