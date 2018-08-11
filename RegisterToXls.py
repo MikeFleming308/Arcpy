@@ -78,7 +78,6 @@ def CreateFieldName(txtlist):
 xl_workbook = xlrd.open_workbook(excel_path) # Open the workbook
 sheetIndex = int(sheetNo)-1
 xl_sheet = xl_workbook.sheet_by_index(sheetIndex)
-# num_cols = xl_sheet.ncols   # Number of columns
 headerIndexNo = int(headerRowNo)-1 # Convert user-input Excel row number to Python index number
 
 if headerIndexNo == 0: # If field names in first row of excel sheet, process only that row.
