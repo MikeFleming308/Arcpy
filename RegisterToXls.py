@@ -5,8 +5,16 @@
 # Mike Fleming 
 # michael.fleming@aurecongroup.com
 # Created: 10/07/2018
-# Last updated 11/07/2018
-# Description: 
+# Last updated 13/07/2018
+""" Description: 
+	Formats the output "Simplified_Register.xls" to be compatible with ArcGIS for import as table. 
+	Takes the path to an Excel copy of the current bridge register as the first parameter. 
+	The worksheet number is the second parameter, the row number of the row holding the field names is the third parameter and the row number of the last row to process is the fourth and final parameter.
+	The output will open upon successful completion of the script.
+	Output may contain field names such as "Unknown_1, Unknown_2" which have been created where header had no text.
+	Output may contain empty rows
+	Output "Simplified_Register.xls" will be in same directory as input
+"""
 #
 #---------------------------------------------------------------------------
 
