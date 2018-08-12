@@ -1,3 +1,4 @@
+
 #
 #---------------------------------------------------------------------------
 #
@@ -36,7 +37,6 @@ col_count = 0
 headcount = -1
 headings = []
 rowNo = 0
-
 
 # Environment Settings
 arcpy.env.overwriteOutput = True
@@ -177,3 +177,4 @@ arcpy.AddMessage("\nFinished " + scriptName)
 finishTime = time.strftime("%#c", time.localtime())
 arcpy.AddMessage(finishTime)
 arcpy.AddMessage("\n=====================================================================")
+
