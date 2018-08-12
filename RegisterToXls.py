@@ -38,7 +38,6 @@ headcount = -1
 headings = []
 rowNo = 0
 
-
 # Environment Settings
 arcpy.env.overwriteOutput = True
 
