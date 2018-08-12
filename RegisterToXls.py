@@ -11,7 +11,7 @@
 #---------------------------------------------------------------------------
 
 # Import modules
-import arcpy, time, xlrd, os, xlwt
+import arcpy, time, xlrd, os, xlwt, collections
 
 # User-supplied parameters
 excel_path = arcpy.GetParameterAsText(0)
@@ -46,8 +46,36 @@ arcpy.AddMessage("\n")
 arcpy.AddMessage(StartTime)
 
 # Functions
-def CreateFieldName(txtlist):
+
+def MakeFieldNamesUnique(alist):
+	dups = []
+	counter = collections.Counter(alist)
+	counts = counter.most_common()
+	for i in counts: # Populate the list of duplicated field names
+		if not i[0] == "":
+			if i[1] > 1:
+				dups.append(i[0])
+	if len(dups) > 0:
+		index_dict = dict()
+		index_no = -1
+		for i in dups:
+			index_dict[i] = [] # Populate dictionary with duplicated field names as keys and an empty list as value
+		for i in alist:
+			index_no += 1
+			if i in dups:
+				index_dict[i].append(index_no) # Populate lists in dictionary with index nos of duplicate field nums
+		for i in dups:
+			fcount = 1
+			for j in index_dict[i]:
+				del alist[j]
+				newfname = "{}_{}".format(i, fcount)
+				alist.insert(j, newfname)
+				fcount += 1
+	return alist
+
+def CreateFieldName(alist):
 	"""Takes a list of strings and formats them as valid field names, returns a dictionary of keys=FIELD_NAME and values=string. Ordered list of field names included as key == "F_ORDER"."""
+	txtlist = MakeFieldNamesUnique(alist)
 	fieldnames = [] # Create a list to maintain ordering of field names
 	fdict = dict() # Create a dictionary to return
 	swaplist = ("-", "_", "/", "\n") # List of characters, new line to be replaced with a space
